@@ -3,11 +3,12 @@ import numpy as np
 
 class Controller(BaseController):
   """
-  PID with proper feedforward: steer ≈ gain * (target - roll) + PID correction
+  Tuned PID with feedforward and preview.
+  Best from grid search: p=0.25, i=0.1, d=-0.1, ff=0.3, preview=0.1
   """
   def __init__(self):
-    self.p = 0.3
-    self.i = 0.05
+    self.p = 0.25
+    self.i = 0.1
     self.d = -0.1
     self.error_integral = 0
     self.prev_error = 0
@@ -19,20 +20,15 @@ class Controller(BaseController):
     error_diff = error - self.prev_error
     self.prev_error = error
 
-    # PID correction
-    pid_output = self.p * error + self.i * self.error_integral + self.d * error_diff
+    pid = self.p * error + self.i * self.error_integral + self.d * error_diff
 
-    # Feedforward: estimate steer needed to produce target lataccel
-    # Subtract roll component since that comes for free from road geometry
     ff_target = target_lataccel - state.roll_lataccel
-    ff_gain = 0.3
-    ff = ff_gain * ff_target
+    ff = 0.3 * ff_target
 
-    # Preview feedforward: anticipate future target changes
     preview_ff = 0.0
     if future_plan and len(future_plan.lataccel) > 2:
-      future_target = future_plan.lataccel[2]  # look 0.3s ahead
-      future_roll = future_plan.roll_lataccel[2] if len(future_plan.roll_lataccel) > 2 else state.roll_lataccel
-      preview_ff = 0.1 * ((future_target - future_roll) - ff_target)
+      ft = future_plan.lataccel[2]
+      fr = future_plan.roll_lataccel[2] if len(future_plan.roll_lataccel) > 2 else state.roll_lataccel
+      preview_ff = 0.1 * ((ft - fr) - ff_target)
 
-    return pid_output + ff + preview_ff
+    return pid + ff + preview_ff
