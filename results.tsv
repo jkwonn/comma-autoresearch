@@ -5,3 +5,4 @@ commit	score	segnet	posenet	rate	status	description
 4357f29	2.25	0.00644	0.09520	0.02518	kept	CRF 32 (improved from 2.28)
 56832b2	2.32	0.00662	0.10461	0.02523	discard	film-grain 28 (worse quality, not worth it)
 d283114	2.22	0.00636	0.09118	0.02505	kept	keyint 300 CRF 32 (new best)
+a997bc1	2.53	0.00629	0.15833	0.02572	discard	REN epoch1 (undertrained, worse)
