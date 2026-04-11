@@ -3,3 +3,4 @@ commit	score	segnet	posenet	rate	status	description
 46238ce	2.29	0.00668	0.10530	0.02375	discard	unsharp 0.40 (worse than 0.27)
 4b98f54	2.29	0.00603	0.09012	0.02936	discard	CRF 30 (quality up but rate too high)
 4357f29	2.25	0.00644	0.09520	0.02518	kept	CRF 32 (improved from 2.28)
+56832b2	2.32	0.00662	0.10461	0.02523	discard	film-grain 28 (worse quality, not worth it)
