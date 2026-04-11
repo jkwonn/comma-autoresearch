@@ -144,18 +144,24 @@ def train(args):
         print("ERROR: No compressed archive found. Run compress.sh first.")
         sys.exit(1)
 
-    print(f"Loading compressed frames from {archive_path}...")
-    comp_frames = decode_all_frames(archive_path, target_w=W, target_h=H, lanczos=True)
+    # Subsample frames to reduce memory (every 3rd frame)
+    SUBSAMPLE = 3
+    print(f"Loading compressed frames from {archive_path} (subsample={SUBSAMPLE})...")
+    all_comp = decode_all_frames(archive_path, target_w=W, target_h=H, lanczos=True)
+    comp_frames = all_comp[::SUBSAMPLE]
+    del all_comp
     print(f"  {len(comp_frames)} frames")
 
     gt_path = os.path.join(PD, 'videos/0.mkv')
-    print(f"Loading GT frames from {gt_path}...")
-    gt_frames = decode_all_frames(gt_path)
+    print(f"Loading GT frames from {gt_path} (subsample={SUBSAMPLE})...")
+    all_gt = decode_all_frames(gt_path)
+    gt_frames = all_gt[::SUBSAMPLE]
+    del all_gt
     print(f"  {len(gt_frames)} frames")
 
     assert len(comp_frames) == len(gt_frames)
 
-    split = 1000
+    split = len(comp_frames) * 5 // 6
     train_ds = ConsecutivePairDataset(comp_frames[:split], gt_frames[:split])
     val_ds = ConsecutivePairDataset(comp_frames[split:], gt_frames[split:])
     print(f"  Train: {len(train_ds)} pairs, Val: {len(val_ds)} pairs")
