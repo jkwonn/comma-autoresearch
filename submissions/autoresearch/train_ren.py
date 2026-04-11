@@ -67,6 +67,31 @@ def decode_all_frames(video_path, target_w=None, target_h=None, lanczos=False):
     return frames
 
 
+def decode_all_frames_subsampled(video_path, subsample, target_w=None, target_h=None, lanczos=False):
+    """Load only every Nth frame to reduce peak memory."""
+    fmt = 'hevc' if video_path.endswith('.hevc') else None
+    container = av.open(video_path, format=fmt)
+    stream = container.streams.video[0]
+    frames = []
+    for i, frame in enumerate(container.decode(stream)):
+        if i % subsample != 0:
+            continue
+        t = yuv420_to_rgb(frame)
+        if target_w and target_h and (t.shape[0] != target_h or t.shape[1] != target_w):
+            if lanczos:
+                pil = Image.fromarray(t.numpy())
+                pil = pil.resize((target_w, target_h), Image.LANCZOS)
+                t = torch.from_numpy(np.array(pil))
+            else:
+                t = F.interpolate(
+                    t.permute(2, 0, 1).unsqueeze(0).float(),
+                    size=(target_h, target_w), mode='bicubic', align_corners=False
+                ).clamp(0, 255).squeeze(0).permute(1, 2, 0).round().to(torch.uint8)
+        frames.append(t)
+    container.close()
+    return frames
+
+
 class ConsecutivePairDataset(Dataset):
     def __init__(self, comp_frames, gt_frames):
         assert len(comp_frames) == len(gt_frames)
@@ -144,19 +169,15 @@ def train(args):
         print("ERROR: No compressed archive found. Run compress.sh first.")
         sys.exit(1)
 
-    # Subsample frames to reduce memory (every 12th frame for 7.7GB RAM environments)
-    SUBSAMPLE = 12
+    # Subsample frames during loading to reduce peak memory
+    SUBSAMPLE = 6
     print(f"Loading compressed frames from {archive_path} (subsample={SUBSAMPLE})...")
-    all_comp = decode_all_frames(archive_path, target_w=W, target_h=H, lanczos=True)
-    comp_frames = all_comp[::SUBSAMPLE]
-    del all_comp
+    comp_frames = decode_all_frames_subsampled(archive_path, SUBSAMPLE, target_w=W, target_h=H, lanczos=True)
     print(f"  {len(comp_frames)} frames")
 
     gt_path = os.path.join(PD, 'videos/0.mkv')
     print(f"Loading GT frames from {gt_path} (subsample={SUBSAMPLE})...")
-    all_gt = decode_all_frames(gt_path)
-    gt_frames = all_gt[::SUBSAMPLE]
-    del all_gt
+    gt_frames = decode_all_frames_subsampled(gt_path, SUBSAMPLE)
     print(f"  {len(gt_frames)} frames")
 
     assert len(comp_frames) == len(gt_frames)
