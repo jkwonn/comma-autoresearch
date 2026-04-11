@@ -72,11 +72,11 @@ head -n "$(wc -l < "$VIDEO_NAMES_FILE")" "$VIDEO_NAMES_FILE" | xargs -P"$JOBS" -
   rm -f "$PRE_IN"
 ' _ {}
 
-# Copy REN model to archive if available
-if [ -f "${HERE}/ren_model.int8.bz2" ]; then
-  cp "${HERE}/ren_model.int8.bz2" "$ARCHIVE_DIR/"
-  echo "Included REN model in archive"
-fi
+# Copy REN model to archive if available (disabled until properly trained)
+# if [ -f "${HERE}/ren_model.int8.bz2" ]; then
+#   cp "${HERE}/ren_model.int8.bz2" "$ARCHIVE_DIR/"
+#   echo "Included REN model in archive"
+# fi
 
 # zip archive
 cd "$ARCHIVE_DIR"
