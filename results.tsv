@@ -1,1 +1,6 @@
 commit	score	status	description
+8b50ee4	84.85	keep	baseline PID copy
+322bd67	80.13	keep	roll compensation + feedforward
+d71969a	72.42	keep	proper feedforward with target-roll and preview
+8b698f1	63.89	keep	tuned PID: p=0.25 i=0.1 d=-0.1
+0a3c5d3	54.59	keep	enhanced PID: weighted lookahead + target rate ff
