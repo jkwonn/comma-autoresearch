@@ -144,8 +144,8 @@ def train(args):
         print("ERROR: No compressed archive found. Run compress.sh first.")
         sys.exit(1)
 
-    # Subsample frames to reduce memory (every 3rd frame)
-    SUBSAMPLE = 3
+    # Subsample frames to reduce memory (every 6th frame for low-RAM environments)
+    SUBSAMPLE = 6
     print(f"Loading compressed frames from {archive_path} (subsample={SUBSAMPLE})...")
     all_comp = decode_all_frames(archive_path, target_w=W, target_h=H, lanczos=True)
     comp_frames = all_comp[::SUBSAMPLE]
