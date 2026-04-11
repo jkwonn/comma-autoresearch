@@ -1,3 +1,4 @@
 commit	score	segnet	posenet	rate	status	description
 5787dd2	2.28	0.00667	0.10392	0.02375	kept	baseline fast preset4 PyAV encoder
 46238ce	2.29	0.00668	0.10530	0.02375	discard	unsharp 0.40 (worse than 0.27)
+4b98f54	2.29	0.00603	0.09012	0.02936	discard	CRF 30 (quality up but rate too high)
