@@ -16,15 +16,14 @@ class Controller(BaseController):
     self.d_filter = 0.5  # low-pass filter on derivative
 
   def update(self, target_lataccel, current_lataccel, state, future_plan):
-    # Weighted lookahead target
+    # Use future target (1 step ahead) as primary - compensates for plant delay
     lookahead_target = target_lataccel
-    if future_plan and len(future_plan.lataccel) > 5:
-      weights = [0.6, 0.15, 0.1, 0.1, 0.05]
-      la_idx = [1, 3, 5, 8]
-      targets = [target_lataccel] + [future_plan.lataccel[i] for i in la_idx if i < len(future_plan.lataccel)]
-      targets = targets[:len(weights)]
-      w = weights[:len(targets)]
-      lookahead_target = sum(t * wi for t, wi in zip(targets, w)) / sum(w)
+    if future_plan and len(future_plan.lataccel) > 9:
+      lookahead_target = (0.4 * target_lataccel +
+                          0.3 * future_plan.lataccel[0] +
+                          0.15 * future_plan.lataccel[2] +
+                          0.1 * future_plan.lataccel[4] +
+                          0.05 * future_plan.lataccel[8])
 
     error = lookahead_target - current_lataccel
     self.error_integral += error
