@@ -1,1 +1,2 @@
 exp	description	score	segnet	posenet	rate	status
+12	fix archive.zip stale file bug	2.00	0.00536	0.07454	0.02416	keep
