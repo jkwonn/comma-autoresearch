@@ -90,13 +90,13 @@ class Controller(BaseController):
     self.step += 1
     steer = self.pid_output(target_lataccel, current_lataccel, state, future_plan)
 
-    # One-time offset search after enough context
-    if (not self.searched and self.step == 110 and
-        future_plan and len(future_plan.lataccel) >= 20 and
-        len(self.actions) >= CONTEXT_LENGTH - 1):
-      self.searched = True
+    # Periodic offset search with smooth transitions
+    do_search = (self.step >= 110 and self.step % 30 == 0 and
+                 future_plan and len(future_plan.lataccel) >= 20 and
+                 len(self.actions) >= CONTEXT_LENGTH - 1)
+    if do_search:
       n_avail = len(future_plan.lataccel)
-      sim_H = 20  # simulation horizon
+      sim_H = 20
       targets = [target_lataccel] + list(future_plan.lataccel[:min(sim_H + 9, n_avail)])
       rng = np.random.get_state()
       draws = [np.random.random() for _ in range(sim_H)]
@@ -105,7 +105,8 @@ class Controller(BaseController):
       for off in [-0.3, -0.15, -0.05, 0.0, 0.05, 0.15, 0.3]:
         c = self._simulate_pid_offset(off, targets, future_plan, draws)
         if c < best_cost: best_cost = c; best_off = off
-      self.offset = best_off
+      # Smooth transition
+      self.offset = 0.5 * self.offset + 0.5 * best_off
 
     self.actions.append(float(np.clip(steer + self.offset, -2, 2)))
     return self.actions[-1]
