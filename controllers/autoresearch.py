@@ -21,12 +21,19 @@ class Controller(BaseController):
     self.step = 0; self.offset = 0.0; self.searched = False
     self.ei = 0.0; self.ep = 0.0; self.fd = 0.0
 
-  def _pid_compute(self, target, current, roll, fp_la, ei, ep, fd):
-    la = target
+  def _pid_compute(self, targets, h, current, roll, ei, ep, fd):
+    """Compute PID matching pid_output exactly. targets is full target array."""
+    t = targets[h]
+    # Match the lookahead from pid_output
+    la = t
+    if h + 9 < len(targets):
+      la = 0.4*t + 0.3*targets[h+1] + 0.15*targets[min(h+3,len(targets)-1)] + 0.1*targets[min(h+5,len(targets)-1)] + 0.05*targets[min(h+9,len(targets)-1)]
     e = la - current
     ei = np.clip(ei + e, -5, 5)
     rd = e - ep; fd = 0.5*fd + 0.5*rd; ep = e
-    out = 0.2*e + 0.1*ei - 0.1*fd + 0.35*(la - roll) + 0.2*fp_la
+    out = 0.2*e + 0.1*ei - 0.1*fd + 0.35*(la - roll)
+    if h + 1 < len(targets):
+      out += 0.2*(targets[h+1] - t)
     return float(np.clip(out, -2, 2)), ei, ep, fd
 
   def _predict(self, st_ctx, act_ctx, lat_ctx, draw):
@@ -41,7 +48,7 @@ class Controller(BaseController):
     return float(self.bins[token])
 
   def _simulate_pid_offset(self, offset, targets, fp, draws):
-    H = len(targets)
+    H = len(draws)  # use draws length as horizon
     st_ctx = list(self.states[-CONTEXT_LENGTH:])
     act_ctx = list(self.actions[-(CONTEXT_LENGTH-1):])
     lat_ctx = list(self.lats[-CONTEXT_LENGTH:])
@@ -56,8 +63,7 @@ class Controller(BaseController):
       elif h > 0:
         st_ctx.append(st_ctx[-1])
       roll = st_ctx[-1][0]
-      fp_la = (targets[h+1]-targets[h]) if h+1<len(targets) else 0.0
-      steer, ei, ep, fd = self._pid_compute(targets[h], cur, roll, fp_la, ei, ep, fd)
+      steer, ei, ep, fd = self._pid_compute(targets, h, cur, roll, ei, ep, fd)
       steer = float(np.clip(steer + offset, -2, 2))
       act_ctx.append(steer)
       pred = self._predict(st_ctx[-CONTEXT_LENGTH:], act_ctx[-CONTEXT_LENGTH:],
@@ -89,9 +95,11 @@ class Controller(BaseController):
         future_plan and len(future_plan.lataccel) >= 20 and
         len(self.actions) >= CONTEXT_LENGTH - 1):
       self.searched = True
-      targets = [target_lataccel] + list(future_plan.lataccel[:19])
+      n_avail = len(future_plan.lataccel)
+      sim_H = 20  # simulation horizon
+      targets = [target_lataccel] + list(future_plan.lataccel[:min(sim_H + 9, n_avail)])
       rng = np.random.get_state()
-      draws = [np.random.random() for _ in range(20)]
+      draws = [np.random.random() for _ in range(sim_H)]
       np.random.set_state(rng)
       best_cost, best_off = float('inf'), 0.0
       for off in [-0.3, -0.15, -0.05, 0.0, 0.05, 0.15, 0.3]:
