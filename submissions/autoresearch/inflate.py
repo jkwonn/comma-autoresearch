@@ -64,12 +64,8 @@ def load_ren(archive_dir):
     return model
 
 
-# Try to load REN model from archive directory
-_ren_model = load_ren(os.path.join(HERE, 'archive'))
-if _ren_model is not None:
-    print("REN model loaded successfully")
-else:
-    print("No REN model found, using unsharp fallback")
+# REN disabled (pixel-loss model hurts PoseNet). Use unsharp fallback.
+_ren_model = None
 
 
 def decode_and_resize_to_file(video_path: str, dst: str):

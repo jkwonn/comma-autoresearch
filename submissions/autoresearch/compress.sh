@@ -57,7 +57,7 @@ head -n "$(wc -l < "$VIDEO_NAMES_FILE")" "$VIDEO_NAMES_FILE" | xargs -P"$JOBS" -
     --outside-luma-denoise 2.5 \
     --outside-chroma-mode medium \
     --feather-radius 24 \
-    --outside-blend 0.50
+    --outside-blend 0.30
 
   # Step 2: Downscale + AV1 encode (via PyAV which bundles libsvtav1)
   python "'"${HERE}"'/encode_av1.py" \
@@ -72,11 +72,11 @@ head -n "$(wc -l < "$VIDEO_NAMES_FILE")" "$VIDEO_NAMES_FILE" | xargs -P"$JOBS" -
   rm -f "$PRE_IN"
 ' _ {}
 
-# Copy REN model to archive if available
-if [ -f "${HERE}/ren_model.int8.bz2" ]; then
-  cp "${HERE}/ren_model.int8.bz2" "$ARCHIVE_DIR/"
-  echo "Included REN model in archive"
-fi
+# REN model disabled (pixel-loss model hurts PoseNet)
+# if [ -f "${HERE}/ren_model.int8.bz2" ]; then
+#   cp "${HERE}/ren_model.int8.bz2" "$ARCHIVE_DIR/"
+#   echo "Included REN model in archive"
+# fi
 
 # zip archive (remove old zip first to avoid stale files from previous runs)
 rm -f "${HERE}/archive.zip"
