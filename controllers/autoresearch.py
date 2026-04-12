@@ -31,7 +31,7 @@ class Controller(BaseController):
     e = la - current
     ei = np.clip(ei + e, -5, 5)
     rd = e - ep; fd = 0.5*fd + 0.5*rd; ep = e
-    out = 0.2*e + 0.1*ei - 0.1*fd + 0.35*(la - roll)
+    out = 0.2*e + 0.1*ei - 0.15*fd + 0.35*(la - roll)
     if h + 1 < len(targets):
       out += 0.2*(targets[h+1] - t)
     return float(np.clip(out, -2, 2)), ei, ep, fd
