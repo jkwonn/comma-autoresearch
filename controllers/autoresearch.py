@@ -9,7 +9,7 @@ class Controller(BaseController):
   def __init__(self):
     self.p = 0.2
     self.i = 0.1
-    self.d = -0.15
+    self.d = -0.10
     self.error_integral = 0
     self.prev_error = 0
     self.filtered_deriv = 0
@@ -39,7 +39,7 @@ class Controller(BaseController):
 
     # Feedforward
     ff_target = lookahead_target - state.roll_lataccel
-    ff = 0.3 * ff_target
+    ff = 0.35 * ff_target
 
     # Future roll compensation
     future_roll_ff = 0.0
@@ -49,6 +49,6 @@ class Controller(BaseController):
     # Target rate feedforward
     target_rate_ff = 0.0
     if future_plan and len(future_plan.lataccel) > 1:
-      target_rate_ff = 0.15 * (future_plan.lataccel[1] - target_lataccel)
+      target_rate_ff = 0.20 * (future_plan.lataccel[1] - target_lataccel)
 
     return pid + ff + future_roll_ff + target_rate_ff
