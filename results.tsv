@@ -13,3 +13,4 @@ a44e6ef\t50.61\tkeep\tforward-looking target 40/30/15/10/5
 8c64ae9\t50.83\tdiscard\tearlier search: context not clean
 bc569ad\t48.50\tkeep\toptimized lookahead 50/30/12/8 + offset search
 ce31746\t50.56\tdiscard\t3-param overfits
+0f16f70\t47.19\tkeep\tsmooth periodic offset: adapts within segment
