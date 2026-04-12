@@ -11,7 +11,7 @@ DEVICE = torch.device('cuda' if torch.cuda.is_available() else ('mps' if torch.b
 # 9-tap binomial unsharp kernel (Pascal row 8 / 65536)
 _r = torch.tensor([1., 8., 28., 56., 70., 56., 28., 8., 1.])
 KERNEL = (torch.outer(_r, _r) / (_r.sum()**2)).to(DEVICE).expand(3, 1, 9, 9)
-STRENGTH = 0.35
+STRENGTH = 0.27
 
 
 class REN(nn.Module):

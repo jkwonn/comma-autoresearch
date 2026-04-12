@@ -64,7 +64,7 @@ head -n "$(wc -l < "$VIDEO_NAMES_FILE")" "$VIDEO_NAMES_FILE" | xargs -P"$JOBS" -
     --input "$PRE_IN" \
     --output "$OUT" \
     --scale 0.45 \
-    --crf ${CRF:-32} \
+    --crf ${CRF:-33} \
     --preset ${PRESET} \
     --film-grain 22 \
     --keyint 300
