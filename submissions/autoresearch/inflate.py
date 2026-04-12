@@ -64,8 +64,8 @@ def load_ren(archive_dir):
     return model
 
 
-# REN disabled (pixel-loss model hurts PoseNet). Use unsharp fallback.
-_ren_model = None
+# Try to load REN model from archive; fall back to unsharp if not found
+_ren_model = load_ren(os.path.join(HERE, 'archive'))
 
 
 def decode_and_resize_to_file(video_path: str, dst: str):
