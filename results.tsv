@@ -12,3 +12,4 @@ a44e6ef\t50.61\tkeep\tforward-looking target 40/30/15/10/5
 34929a2\t49.87\tkeep\tfix sim PID matching: offset search now more accurate
 8c64ae9\t50.83\tdiscard\tearlier search: context not clean
 bc569ad\t48.50\tkeep\toptimized lookahead 50/30/12/8 + offset search
+ce31746\t50.56\tdiscard\t3-param overfits
