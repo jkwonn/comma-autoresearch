@@ -1,6 +1,6 @@
 #!/usr/bin/env python
 """Package REN model weights as int8+bz2 for minimal archive size."""
-import os, io, bz2, struct, torch
+import os, io, bz2, struct, zipfile, torch
 import numpy as np
 
 HERE = os.path.dirname(os.path.abspath(__file__))
@@ -49,6 +49,17 @@ def main():
     print(f"  Ratio: {out_size/pt_size:.1%}")
     print(f"  Saved to: {out_path}")
     print(f"  Copied to: {archive_path}")
+
+    # Re-create archive.zip to include the new model
+    zip_path = os.path.join(HERE, 'archive.zip')
+    archive_dir = os.path.join(HERE, 'archive')
+    if os.path.isdir(archive_dir):
+        if os.path.exists(zip_path):
+            os.remove(zip_path)
+        with zipfile.ZipFile(zip_path, 'w', zipfile.ZIP_DEFLATED) as zf:
+            for f in os.listdir(archive_dir):
+                zf.write(os.path.join(archive_dir, f), f)
+        print(f"  Re-created archive.zip ({os.path.getsize(zip_path):,} bytes)")
 
 if __name__ == '__main__':
     main()
