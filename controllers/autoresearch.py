@@ -26,8 +26,8 @@ class Controller(BaseController):
     t = targets[h]
     # Match the lookahead from pid_output
     la = t
-    if h + 9 < len(targets):
-      la = 0.4*t + 0.3*targets[h+1] + 0.15*targets[min(h+3,len(targets)-1)] + 0.1*targets[min(h+5,len(targets)-1)] + 0.05*targets[min(h+9,len(targets)-1)]
+    if h + 6 < len(targets):
+      la = 0.5*t + 0.3*targets[h+1] + 0.12*targets[min(h+3,len(targets)-1)] + 0.08*targets[min(h+6,len(targets)-1)]
     e = la - current
     ei = np.clip(ei + e, -5, 5)
     rd = e - ep; fd = 0.5*fd + 0.5*rd; ep = e
@@ -75,8 +75,8 @@ class Controller(BaseController):
 
   def pid_output(self, target, current, state, fp):
     la = target
-    if fp and len(fp.lataccel) > 9:
-      la = 0.4*target + 0.3*fp.lataccel[0] + 0.15*fp.lataccel[2] + 0.1*fp.lataccel[4] + 0.05*fp.lataccel[8]
+    if fp and len(fp.lataccel) > 5:
+      la = 0.5*target + 0.3*fp.lataccel[0] + 0.12*fp.lataccel[2] + 0.08*fp.lataccel[5]
     e = la - current
     self.ei = np.clip(self.ei + e, -5, 5)
     rd = e - self.ep; self.fd = 0.5*self.fd + 0.5*rd; self.ep = e
