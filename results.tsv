@@ -6,3 +6,4 @@ d71969a	72.42	keep	proper feedforward with target-roll and preview
 0a3c5d3	54.59	keep	enhanced PID: weighted lookahead + target rate ff
 2d92f99	53.36	keep	tuned: p=0.2, la_w=[0.6,...], roll_ff=0.05
 76fa9b1	52.76	keep	derivative filter: d=-0.15, d_filter=0.5
+6855a94\t51.59\tkeep\tgrid search gains: d=-0.1, ff=0.35, rate_ff=0.2
