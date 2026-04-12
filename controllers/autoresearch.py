@@ -106,7 +106,7 @@ class Controller(BaseController):
         c = self._simulate_pid_offset(off, targets, future_plan, draws)
         if c < best_cost: best_cost = c; best_off = off
       # Smooth transition
-      self.offset = 0.5 * self.offset + 0.5 * best_off
+      self.offset = 0.6 * self.offset + 0.4 * best_off
 
     self.actions.append(float(np.clip(steer + self.offset, -2, 2)))
     return self.actions[-1]
