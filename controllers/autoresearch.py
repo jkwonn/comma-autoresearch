@@ -96,13 +96,13 @@ class Controller(BaseController):
                  len(self.actions) >= CONTEXT_LENGTH - 1)
     if do_search:
       n_avail = len(future_plan.lataccel)
-      sim_H = 20
+      sim_H = 10
       targets = [target_lataccel] + list(future_plan.lataccel[:min(sim_H + 9, n_avail)])
       rng = np.random.get_state()
       draws = [np.random.random() for _ in range(sim_H)]
       np.random.set_state(rng)
       best_cost, best_off = float('inf'), 0.0
-      for off in [-0.5, -0.3, -0.15, -0.05, 0.0, 0.05, 0.15, 0.3, 0.5]:
+      for off in [-0.5, -0.3, -0.2, -0.1, -0.05, 0.0, 0.05, 0.1, 0.2, 0.3, 0.5]:
         c = self._simulate_pid_offset(off, targets, future_plan, draws)
         if c < best_cost: best_cost = c; best_off = off
       # Smooth transition
