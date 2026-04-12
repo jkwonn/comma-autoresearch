@@ -91,7 +91,7 @@ class Controller(BaseController):
     steer = self.pid_output(target_lataccel, current_lataccel, state, future_plan)
 
     # Periodic offset search with smooth transitions
-    do_search = (self.step >= 110 and
+    do_search = (self.step >= 85 and
                  future_plan and len(future_plan.lataccel) >= 20 and
                  len(self.actions) >= CONTEXT_LENGTH - 1)
     if do_search:
