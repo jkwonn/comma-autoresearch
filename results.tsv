@@ -8,3 +8,4 @@ d71969a	72.42	keep	proper feedforward with target-roll and preview
 76fa9b1	52.76	keep	derivative filter: d=-0.15, d_filter=0.5
 6855a94\t51.59\tkeep\tgrid search gains: d=-0.1, ff=0.35, rate_ff=0.2
 a44e6ef\t50.61\tkeep\tforward-looking target 40/30/15/10/5
+8e0f86f\t50.11\tkeep\tPID + ONNX offset search: per-segment adaptation
