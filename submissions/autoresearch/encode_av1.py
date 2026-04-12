@@ -34,7 +34,7 @@ def encode(input_path, output_path, scale, crf, preset, film_grain, keyint):
     out_stream.options = {
         'preset': str(preset),
         'crf': str(crf),
-        'svtav1-params': f'film-grain={film_grain}:keyint={keyint}:scd=0:variance-boost-strength=1',
+        'svtav1-params': f'film-grain={film_grain}:keyint={keyint}:scd=0',
     }
 
     n = 0
