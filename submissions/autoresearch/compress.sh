@@ -54,7 +54,7 @@ head -n "$(wc -l < "$VIDEO_NAMES_FILE")" "$VIDEO_NAMES_FILE" | xargs -P"$JOBS" -
   python "'"${HERE}"'/preprocess.py" \
     --input "$IN" \
     --output "$PRE_IN" \
-    --outside-luma-denoise 2.5 \
+    --outside-luma-denoise 1.5 \
     --outside-chroma-mode medium \
     --feather-radius 24 \
     --outside-blend 0.60
