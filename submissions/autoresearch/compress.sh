@@ -78,7 +78,8 @@ head -n "$(wc -l < "$VIDEO_NAMES_FILE")" "$VIDEO_NAMES_FILE" | xargs -P"$JOBS" -
 #   echo "Included REN model in archive"
 # fi
 
-# zip archive
+# zip archive (remove old zip first to avoid stale files from previous runs)
+rm -f "${HERE}/archive.zip"
 cd "$ARCHIVE_DIR"
 if command -v zip &>/dev/null; then
   zip -r "${HERE}/archive.zip" .
