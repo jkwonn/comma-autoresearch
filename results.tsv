@@ -36,3 +36,4 @@ exp72\t26.42\tdiscard\toutput smoothing
 exp71\t26.04\tdiscard\tgentler PID
 grad\t---\tdiscard\tgradient optimization: too slow (74min for 3 segs)
 exp77\t25.62\tkeep\t13 candidates: 25.62!
+exp78\t25.57\tkeep\t15 candidates with ±0.7
