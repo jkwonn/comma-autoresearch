@@ -57,7 +57,7 @@ head -n "$(wc -l < "$VIDEO_NAMES_FILE")" "$VIDEO_NAMES_FILE" | xargs -P"$JOBS" -
     --outside-luma-denoise 2.5 \
     --outside-chroma-mode medium \
     --feather-radius 24 \
-    --outside-blend 0.0
+    --outside-blend 0.50
 
   # Step 2: Downscale + AV1 encode (via PyAV which bundles libsvtav1)
   python "'"${HERE}"'/encode_av1.py" \
