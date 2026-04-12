@@ -22,3 +22,4 @@ exp57\t36.27\tkeep\tsearch every 2 steps
 exp58\t35.75\tkeep\tsearch every step: 35.75
 exp59\t35.73\tkeep\twider offsets: marginal improvement
 exp60\t31.32\tkeep\thoriz 10, 11 offsets: 31.32!
+exp61\t89.48\tdiscard\tH=5 too short
