@@ -55,7 +55,7 @@ head -n "$(wc -l < "$VIDEO_NAMES_FILE")" "$VIDEO_NAMES_FILE" | xargs -P"$JOBS" -
     --input "$IN" \
     --output "$PRE_IN" \
     --outside-luma-denoise 2.5 \
-    --outside-chroma-mode medium \
+    --outside-chroma-mode soft \
     --feather-radius 24 \
     --outside-blend 0.60
 
