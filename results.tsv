@@ -16,3 +16,4 @@ ce31746\t50.56\tdiscard\t3-param overfits
 0f16f70\t47.19\tkeep\tsmooth periodic offset: adapts within segment
 5ca7be3\t46.23\tkeep\tsearch every 20 steps
 6439609\t43.83\tkeep\tsearch every 10 steps: big tracking improvement
+b398649\t40.29\tkeep\tsearch every 5 steps: 40.29!
