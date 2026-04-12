@@ -85,10 +85,10 @@ def decode_and_resize_to_file(video_path: str, dst: str):
         if _ren_model is not None:
           with torch.no_grad():
             x = _ren_model(x)
-        else:
-          # Fallback: unsharp masking
-          blur = F.conv2d(F.pad(x, (4, 4, 4, 4), mode='reflect'), KERNEL, padding=0, groups=3)
-          x = x + STRENGTH * (x - blur)
+
+        # Always apply unsharp masking (after REN if available, standalone otherwise)
+        blur = F.conv2d(F.pad(x, (4, 4, 4, 4), mode='reflect'), KERNEL, padding=0, groups=3)
+        x = x + STRENGTH * (x - blur)
 
         t = x.clamp(0, 255).squeeze(0).permute(1, 2, 0).round().cpu().to(torch.uint8)
       f.write(t.contiguous().numpy().tobytes())
