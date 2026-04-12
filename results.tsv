@@ -29,3 +29,9 @@ exp64\t28.41\tkeep\tH=6: 28.41!
 exp66\t27.89\tkeep\tsmoothing 0.6/0.4: 27.89!
 exp68\t27.24\tkeep\tsearch from step 85: 27.24!
 exp69\t25.84\tkeep\tstart step 70: 25.84!
+exp75\t---\tdiscard\twider ±1.0 offsets: killed for gradient approach
+exp74\t26.87\tdiscard\tno D term
+exp73\t27.94\tdiscard\thigher jerk weight in search
+exp72\t26.42\tdiscard\toutput smoothing
+exp71\t26.04\tdiscard\tgentler PID
+grad\t---\tdiscard\tgradient optimization: too slow (74min for 3 segs)
