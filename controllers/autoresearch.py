@@ -102,7 +102,7 @@ class Controller(BaseController):
       draws = [np.random.random() for _ in range(sim_H)]
       np.random.set_state(rng)
       best_cost, best_off = float('inf'), 0.0
-      for off in [-0.5, -0.4, -0.3, -0.2, -0.1, -0.05, 0.0, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5]:
+      for off in [-0.7, -0.5, -0.4, -0.3, -0.2, -0.1, -0.05, 0.0, 0.05, 0.1, 0.2, 0.3, 0.4, 0.5, 0.7]:
         c = self._simulate_pid_offset(off, targets, future_plan, draws)
         if c < best_cost: best_cost = c; best_off = off
       # Smooth transition
