@@ -64,13 +64,8 @@ def load_ren(archive_dir):
     return model
 
 
-# Try to load REN model from archive directory
+# REN model disabled until properly trained (epoch 1 model hurts quality)
 _ren_model = None
-_archive_dir = os.path.join(HERE, 'archive')
-if os.path.exists(os.path.join(_archive_dir, 'ren_model.int8.bz2')):
-    _ren_model = load_ren(_archive_dir)
-    if _ren_model:
-        print(f"REN model loaded from {_archive_dir}")
 
 
 def decode_and_resize_to_file(video_path: str, dst: str):
