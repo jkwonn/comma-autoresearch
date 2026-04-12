@@ -96,7 +96,7 @@ class Controller(BaseController):
                  len(self.actions) >= CONTEXT_LENGTH - 1)
     if do_search:
       n_avail = len(future_plan.lataccel)
-      sim_H = 8
+      sim_H = 7
       targets = [target_lataccel] + list(future_plan.lataccel[:min(sim_H + 9, n_avail)])
       rng = np.random.get_state()
       draws = [np.random.random() for _ in range(sim_H)]
