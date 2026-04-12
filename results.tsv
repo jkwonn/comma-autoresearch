@@ -35,3 +35,4 @@ exp73\t27.94\tdiscard\thigher jerk weight in search
 exp72\t26.42\tdiscard\toutput smoothing
 exp71\t26.04\tdiscard\tgentler PID
 grad\t---\tdiscard\tgradient optimization: too slow (74min for 3 segs)
+exp77\t25.62\tkeep\t13 candidates: 25.62!
