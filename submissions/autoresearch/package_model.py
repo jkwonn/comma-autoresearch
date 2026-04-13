@@ -33,7 +33,7 @@ def main():
         print(f"ERROR: {pt_path} not found. Run train_ren.py first.")
         return
 
-    sd = torch.load(pt_path, map_location='cpu', weights_only=True)
+    sd = torch.load(pt_path, map_location='cpu', weights_only=False)
     raw = quantize_int8(sd)
     compressed = bz2.compress(raw, compresslevel=9)
 
