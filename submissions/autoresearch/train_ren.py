@@ -220,14 +220,13 @@ def train(args):
     _, lp0, ls0, lt0 = compute_loss(model, posenet, segnet, ca, cb, ga, gb, 1.0, 0.1, 0.005)
     print(f"  Identity baseline — pose: {lp0:.6f}, seg: {ls0:.6f}, temp: {lt0:.6f}")
 
-    # Balance losses so PoseNet and SegNet contribute equally
-    # Old formula: w_seg = max(0.01, lp0/ls0) → SegNet dominates 60-600x
-    # New: normalize both to ~1.0 at baseline, then weight equally
-    w_pose = 1.0 / max(lp0, 1e-6)  # Normalize PoseNet to ~1.0
-    w_seg = 1.0 / max(ls0, 1e-6)   # Normalize SegNet to ~1.0
+    # Balance losses: normalize both to ~1.0, then apply seg_weight ratio
+    # seg_weight=1.0 → equal, seg_weight=3.0 → 3x more SegNet focus
+    w_pose = 1.0 / max(lp0, 1e-6)
+    w_seg = args.seg_weight / max(ls0, 1e-6)
     w_temp = 0.01
     print(f"  Weights: w_pose={w_pose:.4f}, w_seg={w_seg:.6f}, w_temp={w_temp:.4f}")
-    print(f"  Balanced contributions: pose={w_pose*lp0:.2f}, seg={w_seg*ls0:.2f}")
+    print(f"  Contributions: pose={w_pose*lp0:.2f}, seg={w_seg*ls0:.2f} (ratio=1:{args.seg_weight})")
 
     del ca, cb, ga, gb
     torch.cuda.empty_cache()
@@ -307,5 +306,7 @@ if __name__ == '__main__':
     parser.add_argument('--batch-size', type=int, default=1)
     parser.add_argument('--lr', type=float, default=1e-3)
     parser.add_argument('--features', type=int, default=32)
+    parser.add_argument('--seg-weight', type=float, default=1.0,
+                        help='SegNet weight relative to PoseNet (1.0=equal, 3.0=3x more SegNet)')
     args = parser.parse_args()
     train(args)
