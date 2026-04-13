@@ -109,7 +109,7 @@ class ConsecutivePairDataset(Dataset):
         return ca, cb, ga, gb
 
 
-def compute_loss(model, posenet, segnet, comp_a, comp_b, gt_a, gt_b, w_seg, w_temp):
+def compute_loss(model, posenet, segnet, comp_a, comp_b, gt_a, gt_b, w_pose, w_seg, w_temp):
     inf_a = model(comp_a)
     inf_b = model(comp_b)
 
@@ -144,7 +144,7 @@ def compute_loss(model, posenet, segnet, comp_a, comp_b, gt_a, gt_b, w_seg, w_te
     corr_b = (inf_b - comp_b) / 255.0
     loss_temp = F.l1_loss(corr_a, corr_b)
 
-    loss = loss_pose + w_seg * loss_seg + w_temp * loss_temp
+    loss = w_pose * loss_pose + w_seg * loss_seg + w_temp * loss_temp
     return loss, loss_pose.item(), loss_seg.item(), loss_temp.item()
 
 
@@ -217,12 +217,17 @@ def train(args):
     ga = ga.unsqueeze(0).to(DEVICE)
     gb = gb.unsqueeze(0).to(DEVICE)
     model.train()
-    _, lp0, ls0, lt0 = compute_loss(model, posenet, segnet, ca, cb, ga, gb, 0.1, 0.005)
+    _, lp0, ls0, lt0 = compute_loss(model, posenet, segnet, ca, cb, ga, gb, 1.0, 0.1, 0.005)
     print(f"  Identity baseline — pose: {lp0:.6f}, seg: {ls0:.6f}, temp: {lt0:.6f}")
 
-    w_seg = max(0.01, min(10.0, lp0 / ls0)) if ls0 > 0 else 0.1
-    w_temp = 0.005
-    print(f"  Weights: w_seg={w_seg:.4f}, w_temp={w_temp:.4f}")
+    # Balance losses so PoseNet and SegNet contribute equally
+    # Old formula: w_seg = max(0.01, lp0/ls0) → SegNet dominates 60-600x
+    # New: normalize both to ~1.0 at baseline, then weight equally
+    w_pose = 1.0 / max(lp0, 1e-6)  # Normalize PoseNet to ~1.0
+    w_seg = 1.0 / max(ls0, 1e-6)   # Normalize SegNet to ~1.0
+    w_temp = 0.01
+    print(f"  Weights: w_pose={w_pose:.4f}, w_seg={w_seg:.6f}, w_temp={w_temp:.4f}")
+    print(f"  Balanced contributions: pose={w_pose*lp0:.2f}, seg={w_seg*ls0:.2f}")
 
     del ca, cb, ga, gb
     torch.cuda.empty_cache()
@@ -242,7 +247,7 @@ def train(args):
             gt_b = gt_b.to(DEVICE)
 
             optimizer.zero_grad()
-            loss, lp, ls, lt = compute_loss(model, posenet, segnet, comp_a, comp_b, gt_a, gt_b, w_seg, w_temp)
+            loss, lp, ls, lt = compute_loss(model, posenet, segnet, comp_a, comp_b, gt_a, gt_b, w_pose, w_seg, w_temp)
             loss.backward()
             torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
             optimizer.step()
@@ -267,7 +272,7 @@ def train(args):
                     comp_b = comp_b.to(DEVICE)
                     gt_a = gt_a.to(DEVICE)
                     gt_b = gt_b.to(DEVICE)
-                    loss, lp, ls, lt = compute_loss(model, posenet, segnet, comp_a, comp_b, gt_a, gt_b, w_seg, w_temp)
+                    loss, lp, ls, lt = compute_loss(model, posenet, segnet, comp_a, comp_b, gt_a, gt_b, w_pose, w_seg, w_temp)
                     val_loss += loss.item()
                     val_lp += lp
                     val_ls += ls
